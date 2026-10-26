@@ -1,0 +1,5 @@
+0000000000000000000000000000000000000000 c9c5a46df9e2afd395bfc38fa7bab2b85c90567e Kurs Indirici <noreply@example.com> 1793005218 +0000	commit (initial): Proje iskeleti: lisans, bağımlılıklar, eski komut satırı sürümü (legacy)
+c9c5a46df9e2afd395bfc38fa7bab2b85c90567e 40afe3bb4d4d2df146d99ae4254ba089b8335ad3 Kurs Indirici <noreply@example.com> 1793005218 +0000	commit: Çekirdek: platform adaptörleri, DRM tespiti, kuyruk, indirme/kodlama, kütüphane, FastAPI sunucusu
+40afe3bb4d4d2df146d99ae4254ba089b8335ad3 99dd262081e8d5197f83ac52b38e12841c2607ab Kurs Indirici <noreply@example.com> 1793005218 +0000	commit: Arayüz: indirme, kuyruk, kütüphane, izleme (oynatıcı/kaynaklar/notlar) ve ayarlar
+99dd262081e8d5197f83ac52b38e12841c2607ab 24ca22d040cb8f438f16e65703839adb8db61dce Kurs Indirici <noreply@example.com> 1793005218 +0000	commit: Testler: DRM, kaynak bulma, kuyruk akışı, sunucu, güvenlik (CSRF/Host/path traversal)
+24ca22d040cb8f438f16e65703839adb8db61dce 3f82614b4da8eedb3ef3468ea656f91dae695fc8 Kurs Indirici <noreply@example.com> 1793005218 +0000	commit: Dokümantasyon ve run.sh

@@ -1,0 +1,10 @@
+{
+  "name": "Örnek profil (kendi sitenle doldur)",
+  "login_url": "https://example.com/giris",
+  "course_list_url": "https://example.com/kurslarim",
+  "course_card_selector": ".course-card a",
+  "section_selector": ".curriculum .section",
+  "section_title_selector": ".section-title",
+  "lesson_selector": "a.lesson-link",
+  "video_wait": 20
+}

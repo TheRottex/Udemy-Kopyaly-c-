@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kurs İndirici</title>
+<style>
+:root{--bg:#f4f5f8;--panel:#fff;--panel2:#eceef4;--text:#1d2130;--muted:#6a7086;--line:#dcdfea;--accent:#5b5bd6;--accent2:#4747b8;--ok:#1f9d63;--warn:#c98200;--err:#d23a3a;--shadow:0 2px 10px rgba(20,25,50,.08)}
+@media (prefers-color-scheme:dark){:root{--bg:#12141c;--panel:#1b1e2a;--panel2:#242838;--text:#e8eaf3;--muted:#9097b0;--line:#2d3247;--accent:#8b8bff;--accent2:#a6a6ff;--ok:#43d18d;--warn:#f0b43a;--err:#ff6b6b;--shadow:0 2px 14px rgba(0,0,0,.35)}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;align-items:center;gap:20px;padding:0 20px;height:56px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.brand{font-weight:700;letter-spacing:.2px}
+.brand span{color:var(--accent)}
+nav{display:flex;gap:4px}
+nav a{padding:8px 14px;border-radius:8px;color:var(--muted);text-decoration:none;font-weight:500}
+nav a:hover{background:var(--panel2);color:var(--text)}
+nav a.on{background:var(--panel2);color:var(--accent)}
+.badge{display:inline-block;min-width:18px;padding:0 6px;margin-left:6px;border-radius:9px;background:var(--accent);color:#fff;font-size:12px;text-align:center}
+main{padding:22px;max-width:1240px;margin:0 auto}
+main.wide{max-width:none;padding:0}
+h1{font-size:22px;margin:0 0 14px}
+h2{font-size:17px;margin:0 0 10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow);margin-bottom:16px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.row.grow>*{flex:1 1 auto}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+input,select,textarea{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+input[type=checkbox]{width:auto;accent-color:var(--accent)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:8px 14px;border-radius:8px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent2)}
+.btn.danger{color:var(--err)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:4px 10px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.course{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.course .thumb{aspect-ratio:16/9;background:linear-gradient(135deg,var(--panel2),var(--line));display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--muted);overflow:hidden}
+.course .thumb img{width:100%;height:100%;object-fit:cover}
+.course .body{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
+.course .title{font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.course.sel{outline:2px solid var(--accent)}
+.course.click{cursor:pointer}
+.course.click:hover{border-color:var(--accent)}
+.chip{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:600;background:var(--panel2);color:var(--muted)}
+.chip.ok{color:var(--ok)}.chip.warn{color:var(--warn)}.chip.err{color:var(--err)}.chip.run{color:var(--accent)}
+.bar{height:6px;border-radius:3px;background:var(--panel2);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.bar.ok>i{background:var(--ok)}
+.lesson-row{display:grid;grid-template-columns:42px 1fr 110px 120px;gap:8px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.lesson-row:last-child{border-bottom:0}
+details>summary{cursor:pointer;font-weight:600}
+pre.log{max-height:220px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px;white-space:pre-wrap;margin:8px 0 0}
+.log .error{color:var(--err)}.log .warn{color:var(--warn)}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+.toast{position:fixed;right:18px;bottom:18px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:10px 14px;box-shadow:var(--shadow);z-index:50;max-width:380px}
+.toast.err{border-left-color:var(--err)}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);width:min(640px,94vw);padding:18px}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.field{display:grid;grid-template-columns:230px 1fr;gap:8px;align-items:center;margin-bottom:8px}
+.field label{font-size:13px;color:var(--muted)}
+@media(max-width:700px){.field{grid-template-columns:1fr}.lesson-row{grid-template-columns:34px 1fr 90px}.lesson-row>:nth-child(4){display:none}}
+
+/* ---- izleme sayfası ---- */
+.watch{display:grid;grid-template-columns:minmax(0,1fr) 360px;height:calc(100vh - 56px)}
+.watch .stage{overflow:auto;background:var(--bg)}
+.watch .side{overflow:auto;background:var(--panel);border-left:1px solid var(--line)}
+.vwrap{background:#000;display:flex;justify-content:center}
+video{width:100%;max-height:calc(100vh - 200px);background:#000}
+.vbar{display:flex;gap:10px;align-items:center;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);padding:0 16px;background:var(--panel)}
+.tabs button{font:inherit;font-weight:600;color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:12px 14px;cursor:pointer}
+.tabs button.on{color:var(--text);border-bottom-color:var(--accent)}
+.tabpane{padding:18px 20px;max-width:900px}
+.side h3{margin:0;padding:14px 16px;font-size:16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:2}
+.sec>summary{padding:12px 16px;background:var(--panel2);border-bottom:1px solid var(--line);list-style:none}
+.sec>summary::before{content:"▸ "}
+.sec[open]>summary::before{content:"▾ "}
+.les{display:grid;grid-template-columns:24px 1fr auto;gap:8px;padding:9px 16px;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px;align-items:start}
+.les:hover{background:var(--panel2)}
+.les.cur{background:var(--panel2);box-shadow:inset 3px 0 var(--accent)}
+.les.off{opacity:.55;cursor:default}
+.res{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.note{padding:8px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:64px 1fr auto;gap:8px;align-items:start}
+.note .t{color:var(--accent);cursor:pointer;font-weight:600}
+a{color:var(--accent)}
+@media(max-width:960px){.watch{grid-template-columns:1fr;height:auto}.watch .side{border-left:0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Kurs <span>İndirici</span></div>
+  <nav id="nav">
+    <a href="#/download" data-r="download">İndir</a>
+    <a href="#/queue" data-r="queue">Kuyruk<span class="badge" id="qbadge" hidden>0</span></a>
+    <a href="#/library" data-r="library">Kütüphane</a>
+    <a href="#/settings" data-r="settings">Ayarlar</a>
+  </nav>
+</header>
+<main id="view"></main>
+
+<script>
+"use strict";
+/* ============ yardımcılar ============ */
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v == null || v === false) continue;
+    if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (k === "class") e.className = v;
+    else if (k === "text") e.textContent = v;
+    else if (k === "value" || k === "checked" || k === "disabled" || k === "selected") e[k] = v;
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(String(c)));
+  return e;
+}
+async function api(method, path, body) {
+  const opt = { method, headers: { "X-Requested-With": "kurs-indirici" } };
+  if (body !== undefined) { opt.headers["Content-Type"] = "application/json"; opt.body = JSON.stringify(body); }
+  const r = await fetch(path, opt);
+  let data = null;
+  try { data = await r.json(); } catch (_) {}
+  if (!r.ok) throw new Error((data && data.detail && (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail))) || ("HTTP " + r.status));
+  return data;
+}
+function toast(msg, err) {
+  const t = h("div", { class: "toast" + (err ? " err" : ""), text: msg });
+  document.body.append(t);
+  setTimeout(() => t.remove(), err ? 6000 : 3000);
+}
+const safeUrl = u => /^https?:\/\//i.test(u || "") ? u : null;
+const enc = encodeURIComponent;
+function fmtTime(s) {
+  s = Math.max(0, Math.floor(s || 0));
+  const hh = Math.floor(s / 3600), mm = Math.floor(s % 3600 / 60), ss = s % 60;
+  return (hh ? hh + ":" + String(mm).padStart(2, "0") : mm) + ":" + String(ss).padStart(2, "0");
+}
+function fmtDur(s) {
+  if (!s) return "";
+  const hh = Math.floor(s / 3600), mm = Math.round(s % 3600 / 60);
+  return hh ? `${hh} sa ${mm} dk` : `${mm} dk`;
+}
+const STATUS = { queued: ["Sırada", ""], listing: ["Kurs okunuyor", "run"], running: ["İndiriliyor", "run"], paused: ["Duraklatıldı", "warn"],
+  partial: ["Kısmen bitti", "warn"], done: ["Tamamlandı", "ok"], error: ["Hata", "err"], pending: ["Bekliyor", ""], drm: ["DRM korumalı", "err"] };
+const STAGE = { discover: "Kaynak aranıyor", download: "İndiriliyor", encode: "Yeniden kodlanıyor" };
+const chip = st => { const [t, c] = STATUS[st] || [st, ""]; return h("span", { class: "chip " + c, text: t }); };
+
+/* ============ durum ============ */
+const state = { platforms: [], pid: localStorage.getItem("pid") || "", jobs: [], route: "", openJobs: new Set(), sel: new Map() };
+let sse, cleanup = null;
+
+/* ============ yönlendirme ============ */
+function setMain(wide) { $("#view").className = wide ? "wide" : ""; }
+async function route() {
+  if (cleanup) { try { cleanup(); } catch (_) {} cleanup = null; }
+  const parts = (location.hash || "#/download").slice(2).split("/");
+  const name = parts[0] || "download";
+  state.route = name;
+  document.querySelectorAll("nav a").forEach(a => a.classList.toggle("on", a.dataset.r === (name === "watch" ? "library" : name)));
+  const v = $("#view");
+  v.replaceChildren();
+  setMain(name === "watch");
+  try {
+    if (name === "download") await viewDownload(v);
+    else if (name === "queue") viewQueue(v);
+    else if (name === "library") await viewLibrary(v);
+    else if (name === "watch") await viewWatch(v, decodeURIComponent(parts[1] || ""), decodeURIComponent(parts[2] || ""));
+    else if (name === "settings") await viewSettings(v);
+    else location.hash = "#/download";
+  } catch (e) { v.replaceChildren(h("div", { class: "empty", text: "Hata: " + e.message })); }
+}
+addEventListener("hashchange", route);
+
+/* ============ canlı iş akışı (SSE) ============ */
+let qTimer = null;
+function startEvents() {
+  sse = new EventSource("/api/events");
+  sse.addEventListener("jobs", e => {
+    state.jobs = JSON.parse(e.data);
+    const act = state.jobs.filter(j => ["queued", "listing", "running"].includes(j.status)).length;
+    const b = $("#qbadge"); b.hidden = !act; b.textContent = act;
+    if (state.route === "queue" && !qTimer) qTimer = setTimeout(() => { qTimer = null; if (state.route === "queue") viewQueue($("#view")); }, 400);
+  });
+}
+
+/* ============ İNDİR ============ */
+async function viewDownload(root) {
+  state.platforms = await api("GET", "/api/platforms");
+  if (!state.platforms.find(p => p.id === state.pid)) state.pid = state.platforms[0] ? state.platforms[0].id : "";
+  const pl = () => state.platforms.find(p => p.id === state.pid);
+  const sel = h("select", { onchange: e => { state.pid = e.target.value; localStorage.setItem("pid", state.pid); state.sel.clear(); route(); } },
+    state.platforms.map(p => h("option", { value: p.id, text: p.name, selected: p.id === state.pid })));
+  const status = h("span", { class: "muted small" });
+  const loginBtn = h("button", { class: "btn", text: "Giriş yap (tarayıcıyı aç)" });
+  const finishBtn = h("button", { class: "btn primary", text: "Giriş tamamlandı", hidden: true });
+  const cfgBtn = h("button", { class: "btn", text: "Profili düzenle" });
+  const newBtn = h("button", { class: "btn", text: "+ Yeni profil" });
+  const p = pl();
+  status.textContent = p && p.session ? "✓ Kayıtlı oturum var" : "Oturum yok";
+  cfgBtn.hidden = !(p && p.configurable);
+  let poll = null;
+  const track = () => {
+    clearInterval(poll);
+    poll = setInterval(async () => {
+      try {
+        const s = await api("GET", `/api/platforms/${enc(state.pid)}/session`);
+        status.textContent = s.message || (s.has_session ? "✓ Kayıtlı oturum var" : "Oturum yok");
+        finishBtn.hidden = !s.active; loginBtn.disabled = s.active;
+        if (!s.active) { clearInterval(poll); state.platforms = await api("GET", "/api/platforms"); }
+      } catch (_) { clearInterval(poll); }
+    }, 1200);
+  };
+  cleanup = () => clearInterval(poll);
+  loginBtn.onclick = async () => {
+    try { await api("POST", `/api/platforms/${enc(state.pid)}/login`); finishBtn.hidden = false; loginBtn.disabled = true; track(); }
+    catch (e) { toast(e.message, true); }
+  };
+  finishBtn.onclick = async () => { try { await api("POST", `/api/platforms/${enc(state.pid)}/login/finish`); track(); } catch (e) { toast(e.message, true); } };
+  cfgBtn.onclick = () => profileDialog(state.pid);
+  newBtn.onclick = async () => {
+    const id = (prompt("Profil kimliği (küçük harf, rakam, - _):") || "").trim();
+    if (!id) return;
+    try { await api("POST", "/api/platforms", { id, config: {} }); state.pid = id; localStorage.setItem("pid", id); await route(); profileDialog(id); }
+    catch (e) { toast(e.message, true); }
+  };
+
+  const q = h("input", { type: "search", placeholder: "Hesabımdaki kurslarda ara…", style: "min-width:260px;flex:1" });
+  const results = h("div", { class: "grid" });
+  const addBar = h("div", { class: "row", style: "margin:12px 0" });
+  const search = async () => {
+    results.replaceChildren(h("div", { class: "empty", text: "Aranıyor…" }));
+    try {
+      const list = await api("GET", `/api/platforms/${enc(state.pid)}/courses?q=${enc(q.value)}`);
+      renderResults(list);
+    } catch (e) { results.replaceChildren(h("div", { class: "empty", text: e.message })); }
+  };
+  const renderAddBar = () => {
+    addBar.replaceChildren(
+      h("button", { class: "btn primary", text: `Seçilenleri kuyruğa ekle (${state.sel.size})`, disabled: !state.sel.size, onclick: async () => {
+        try {
+          await api("POST", "/api/jobs", { platform: state.pid, courses: [...state.sel.values()].map(c => ({ url: c.url, title: c.title })) });
+          toast(`${state.sel.size} kurs kuyruğa eklendi`); state.sel.clear(); location.hash = "#/queue";
+        } catch (e) { toast(e.message, true); }
+      } }));
+  };
+  const renderResults = list => {
+    if (!list.length) { results.replaceChildren(h("div", { class: "empty", text: "Sonuç yok." })); return; }
+    results.replaceChildren(...list.map(c => {
+      const on = state.sel.has(c.url);
+      const card = h("div", { class: "course click" + (on ? " sel" : "") },
+        h("div", { class: "thumb" }, safeUrl(c.thumb) ? h("img", { src: c.thumb, loading: "lazy", referrerpolicy: "no-referrer" }) : "🎓"),
+        h("div", { class: "body" }, h("div", { class: "title", text: c.title })));
+      card.onclick = () => { state.sel.has(c.url) ? state.sel.delete(c.url) : state.sel.set(c.url, c); card.classList.toggle("sel"); renderAddBar(); };
+      return card;
+    }));
+  };
+  q.addEventListener("keydown", e => { if (e.key === "Enter") search(); });
+  const urlIn = h("input", { type: "url", placeholder: "veya doğrudan kurs sayfası URL'si", style: "flex:1;min-width:260px" });
+
+  root.append(
+    h("h1", { text: "Kurs indir" }),
+    h("div", { class: "card" },
+      h("h2", { text: "1. Platform ve oturum" }),
+      h("p", { class: "muted small", text: "Şifre bu uygulamaya yazılmaz: açılan tarayıcıda kendin giriş yaparsın, yalnızca oturum çerezi yerelde saklanır." }),
+      h("div", { class: "row" }, sel, loginBtn, finishBtn, cfgBtn, newBtn, status)),
+    h("div", { class: "card" },
+      h("h2", { text: "2. Kursları bul" }),
+      h("div", { class: "row" }, q, h("button", { class: "btn primary", text: "Ara / Listele", onclick: search })),
+      addBar, results,
+      h("hr", { style: "border:0;border-top:1px solid var(--line);margin:16px 0" }),
+      h("div", { class: "row" }, urlIn, h("button", { class: "btn", text: "URL ile kuyruğa ekle", onclick: async () => {
+        if (!urlIn.value.trim()) return;
+        try { await api("POST", "/api/jobs", { platform: state.pid, courses: [{ url: urlIn.value.trim() }] }); urlIn.value = ""; location.hash = "#/queue"; }
+        catch (e) { toast(e.message, true); }
+      } }))),
+    h("p", { class: "muted small", text: "Yalnızca kendi hesabınla erişebildiğin, DRM'siz içerikler için. Platformun kullanım şartlarını kontrol etmek senin sorumluluğundadır. DRM'li videolar otomatik atlanır." }));
+  renderAddBar();
+}
+
+async function profileDialog(pid) {
+  let data;
+  try { data = await api("GET", `/api/platforms/${enc(pid)}/config`); } catch (e) { toast(e.message, true); return; }
+  const inputs = {};
+  const dlg = h("dialog", {},
+    h("h2", { text: `Profil: ${pid}` }),
+    h("p", { class: "muted small", text: "CSS seçicileri siteye göre doldur. Boş bırakılanlar kullanılmaz; 'Kaynaklar' alanları boşsa otomatik aranır." }),
+    ...Object.entries(data.keys).map(([k, label]) => {
+      inputs[k] = h("input", { value: data.config[k] == null ? "" : String(data.config[k]), style: "width:100%" });
+      return h("div", { class: "field" }, h("label", { text: label }), inputs[k]);
+    }),
+    h("div", { class: "row", style: "justify-content:flex-end;margin-top:12px" },
+      h("button", { class: "btn", text: "İptal", onclick: () => dlg.close() }),
+      h("button", { class: "btn primary", text: "Kaydet", onclick: async () => {
+        const body = {}; for (const [k, el] of Object.entries(inputs)) if (el.value.trim()) body[k] = el.value.trim();
+        try { await api("PUT", `/api/platforms/${enc(pid)}/config`, body); toast("Profil kaydedildi"); dlg.close(); route(); }
+        catch (e) { toast(e.message, true); }
+      } })));
+  dlg.addEventListener("close", () => dlg.remove());
+  document.body.append(dlg); dlg.showModal();
+}
+
+/* ============ KUYRUK ============ */
+function viewQueue(root) {
+  const scroll = window.scrollY;
+  root.replaceChildren(h("h1", { text: "İndirme kuyruğu" }));
+  if (!state.jobs.length) { root.append(h("div", { class: "empty", text: "Kuyruk boş. «İndir» sekmesinden kurs ekle." })); return; }
+  for (const j of state.jobs.slice().reverse()) {
+    const total = j.lessons.length, done = j.lessons.filter(l => l.status === "done").length;
+    const failed = j.lessons.filter(l => l.status === "error").length, drm = j.lessons.filter(l => l.status === "drm").length;
+    const pct = total ? Math.round(done * 100 / total) : 0;
+    const acts = [];
+    if (["queued", "listing", "running"].includes(j.status)) acts.push(btn("Duraklat", () => act(j, "pause")));
+    if (["paused", "partial", "error"].includes(j.status)) acts.push(btn("Devam", () => act(j, "resume"), "primary"));
+    if (failed || j.status === "error") acts.push(btn("Hatalıları yeniden dene", () => act(j, "retry")));
+    if (j.status === "done" || j.status === "partial") acts.push(h("a", { class: "btn sm", href: `#/library`, text: "Kütüphane" }));
+    acts.push(btn("Kaldır", async () => { if (confirm("Kuyruktan kaldırılsın mı? (indirilen dosyalar silinmez)")) { await api("DELETE", `/api/jobs/${j.id}`); } }, "danger"));
+
+    const det = h("details", { open: state.openJobs.has(j.id) ? true : null });
+    det.addEventListener("toggle", () => det.open ? state.openJobs.add(j.id) : state.openJobs.delete(j.id));
+    det.append(h("summary", { text: `Dersler (${done}/${total})${failed ? ` · ${failed} hata` : ""}${drm ? ` · ${drm} DRM` : ""}` }),
+      ...j.lessons.map(l => h("div", { class: "lesson-row" },
+        h("span", { class: "muted", text: String(l.index).padStart(3, "0") }),
+        h("span", { text: l.title, title: l.error || "" }),
+        chip(l.status),
+        l.status === "running" ? h("div", {}, h("div", { class: "small muted", text: `${STAGE[l.stage] || ""} ${Math.round(l.progress || 0)}%` }),
+          h("div", { class: "bar" }, h("i", { style: `width:${l.progress || 0}%` }))) : (l.error ? h("span", { class: "small muted", text: l.error }) : h("span")))));
+    const logs = h("details", {}, h("summary", { text: "Günlük" }),
+      h("pre", { class: "log" }, ...j.logs.map(g => h("div", { class: g.level }, new Date(g.t * 1000).toLocaleTimeString() + "  " + g.msg))));
+    root.append(h("div", { class: "card" },
+      h("div", { class: "row", style: "justify-content:space-between" },
+        h("div", {}, h("strong", { text: j.title }), " ", chip(j.status), " ", h("span", { class: "muted small", text: j.platform })),
+        h("div", { class: "row" }, acts)),
+      j.error ? h("div", { class: "small", style: "color:var(--err);margin-top:6px", text: j.error }) : null,
+      h("div", { class: "bar" + (j.status === "done" ? " ok" : ""), style: "margin:10px 0" }, h("i", { style: `width:${pct}%` })),
+      total ? det : null, logs));
+  }
+  window.scrollTo(0, scroll);
+}
+const btn = (t, fn, cls) => h("button", { class: "btn sm " + (cls || ""), text: t, onclick: async () => { try { await fn(); } catch (e) { toast(e.message, true); } } });
+const act = (j, a) => api("POST", `/api/jobs/${j.id}/${a}`);
+
+/* ============ KÜTÜPHANE ============ */
+async function viewLibrary(root) {
+  const list = await api("GET", "/api/library");
+  root.append(h("h1", { text: "Kütüphane" }));
+  if (!list.length) { root.append(h("div", { class: "empty", text: "Henüz izlenebilir kurs yok. İndirme tamamlandıkça burada görünür." })); return; }
+  root.append(h("div", { class: "grid" }, list.map(c => {
+    const pct = c.lessons ? Math.round(c.watched * 100 / c.lessons) : 0;
+    return h("div", { class: "course click", onclick: () => { if (c.first_lesson) location.hash = `#/watch/${enc(c.slug)}/${enc(c.first_lesson)}`; else toast("Bu kursta oynatılabilir video yok", true); } },
+      h("div", { class: "thumb", text: "▶" }),
+      h("div", { class: "body" },
+        h("div", { class: "title", text: c.title }),
+        h("div", { class: "small muted", text: `${c.playable}/${c.lessons} ders · ${fmtDur(c.duration)} · ${c.platform}` }),
+        h("div", { class: "bar" + (pct === 100 ? " ok" : "") }, h("i", { style: `width:${pct}%` })),
+        h("div", { class: "small muted", text: `%${pct} izlendi` })));
+  })));
+}
+
+/* ============ İZLEME ============ */
+async function viewWatch(root, slug, lid) {
+  const meta = await api("GET", `/api/library/${enc(slug)}`);
+  const flat = meta.sections.flatMap(s => s.lessons);
+  if (!lid && flat.length) lid = (flat.find(l => l.video) || flat[0]).id;
+  const cur = flat.find(l => l.id === lid);
+  if (!cur) { root.append(h("div", { class: "empty", text: "Ders bulunamadı." })); return; }
+  const prog = meta.progress || {};
+  const base = `/api/media/${enc(slug)}/${enc(lid)}`;
+
+  /* --- müfredat --- */
+  const side = h("div", { class: "side" }, h("h3", { text: meta.title }));
+  for (const s of meta.sections) {
+    const has = s.lessons.some(l => l.id === lid);
+    side.append(h("details", { class: "sec", open: has ? true : null },
+      h("summary", { text: `${s.title}  ·  ${s.lessons.filter(l => (prog[l.id] || {}).completed).length}/${s.lessons.length}` }),
+      s.lessons.map(l => {
+        const done = (prog[l.id] || {}).completed;
+        return h("div", { class: "les" + (l.id === lid ? " cur" : "") + (l.video ? "" : " off"),
+          title: l.video ? "" : (l.error || l.status),
+          onclick: () => { if (l.video) location.hash = `#/watch/${enc(slug)}/${enc(l.id)}`; } },
+          h("span", { text: l.id === lid ? "▶" : done ? "✓" : l.video ? "○" : "–", style: done ? "color:var(--ok)" : "" }),
+          h("span", { text: `${l.index}. ${l.title}` }),
+          h("span", { class: "small muted", text: l.status === "drm" ? "DRM" : fmtDur(l.duration) }));
+      })));
+  }
+
+  /* --- video --- */
+  const stage = h("div", { class: "stage" });
+  let video = null, saveT = 0;
+  if (cur.video) {
+    video = h("video", { controls: true, preload: "metadata", src: `${base}/video`, crossorigin: "anonymous" });
+    cur.subtitles.forEach((st, i) => video.append(h("track", { kind: "subtitles", src: `${base}/subtitle/${i}`, label: st.lang,
+      srclang: /^[a-z]{2,3}(-[A-Za-z0-9]+)?$/.test(st.lang) ? st.lang : null })));
+    stage.append(h("div", { class: "vwrap" }, video));
+  } else {
+    stage.append(h("div", { class: "empty", text: cur.status === "drm" ? "Bu ders DRM korumalı olduğu için indirilemedi." : (cur.error || "Bu ders için video yok.") }));
+  }
+  const rate = h("select", { onchange: e => { if (video) video.playbackRate = +e.target.value; localStorage.setItem("rate", e.target.value); } },
+    [0.75, 1, 1.25, 1.5, 1.75, 2].map(r => h("option", { value: r, text: r + "×", selected: r === +(localStorage.getItem("rate") || 1) })));
+  const autoNext = h("input", { type: "checkbox", checked: localStorage.getItem("autonext") !== "0", onchange: e => localStorage.setItem("autonext", e.target.checked ? "1" : "0") });
+  stage.append(h("div", { class: "vbar" },
+    h("strong", { text: `${cur.index}. ${cur.title}` }), h("span", { style: "flex:1" }),
+    h("label", { class: "small" }, "Hız ", rate), h("label", { class: "small" }, autoNext, " Sonrakine geç"),
+    h("span", { class: "small muted", text: "Kısayol: Boşluk/K oynat · J/L ±10sn · ←/→ ±5sn · M ses · F tam ekran · C altyazı · < > hız" })));
+
+  const save = (completed) => {
+    if (!video || !isFinite(video.duration)) return;
+    fetch(`/api/progress/${enc(slug)}/${enc(lid)}`, { method: "PUT", keepalive: true,
+      headers: { "X-Requested-With": "kurs-indirici", "Content-Type": "application/json" },
+      body: JSON.stringify({ position: video.currentTime, duration: video.duration, completed: !!completed }) }).catch(() => {});
+  };
+  if (video) {
+    video.addEventListener("loadedmetadata", () => {
+      video.playbackRate = +(localStorage.getItem("rate") || 1);
+      const p = prog[lid];
+      if (p && !p.completed && p.position > 3 && p.position < video.duration - 5) video.currentTime = p.position;
+    });
+    video.addEventListener("timeupdate", () => { const n = Date.now(); if (n - saveT > 5000) { saveT = n; save(false); } });
+    video.addEventListener("pause", () => save(false));
+    video.addEventListener("ended", () => {
+      save(true);
+      const i = flat.findIndex(l => l.id === lid), nx = flat.slice(i + 1).find(l => l.video);
+      if (autoNext.checked && nx) location.hash = `#/watch/${enc(slug)}/${enc(nx.id)}`;
+    });
+  }
+  const onKey = e => {
+    if (!video || /^(INPUT|TEXTAREA|SELECT)$/.test((e.target.tagName || "")) || e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key; let used = true;
+    if (k === " " || k === "k") video.paused ? video.play() : video.pause();
+    else if (k === "j") video.currentTime -= 10; else if (k === "l") video.currentTime += 10;
+    else if (k === "ArrowLeft") video.currentTime -= 5; else if (k === "ArrowRight") video.currentTime += 5;
+    else if (k === "ArrowUp") video.volume = Math.min(1, video.volume + .1); else if (k === "ArrowDown") video.volume = Math.max(0, video.volume - .1);
+    else if (k === "m") video.muted = !video.muted;
+    else if (k === "f") document.fullscreenElement ? document.exitFullscreen() : video.requestFullscreen();
+    else if (k === "c") { const t = video.textTracks[0]; if (t) t.mode = t.mode === "showing" ? "hidden" : "showing"; else used = false; }
+    else if (k === "<" || k === ">") { const rs = [0.75, 1, 1.25, 1.5, 1.75, 2]; let i = rs.indexOf(video.playbackRate); i = Math.max(0, Math.min(rs.length - 1, i + (k === ">" ? 1 : -1))); video.playbackRate = rs[i]; rate.value = rs[i]; }
+    else used = false;
+    if (used) e.preventDefault();
+  };
+  document.addEventListener("keydown", onKey);
+  const vis = () => { if (document.hidden) save(false); };
+  document.addEventListener("visibilitychange", vis);
+  cleanup = () => { save(false); document.removeEventListener("keydown", onKey); document.removeEventListener("visibilitychange", vis); };
+
+  /* --- sekmeler --- */
+  const pane = h("div", { class: "tabpane" });
+  const tabs = h("div", { class: "tabs" });
+  const T = { info: ["Genel Bakış", paneInfo], res: ["Kaynaklar", paneRes], notes: ["Notlar", paneNotes] };
+  const show = k => {
+    tabs.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.k === k));
+    pane.replaceChildren(); T[k][1](pane);
+  };
+  for (const k of Object.keys(T)) tabs.append(h("button", { "data-k": k, text: T[k][0], onclick: () => show(k) }));
+  stage.append(tabs, pane);
+
+  function paneInfo(p) {
+    const total = flat.length, ok = flat.filter(l => l.video).length;
+    const link = (label, u) => h("div", { class: "small", style: "margin:4px 0" }, h("span", { class: "muted", text: label + ": " }),
+      safeUrl(u) ? h("a", { href: u, target: "_blank", rel: "noopener noreferrer nofollow", text: u.split("?")[0] }) : h("span", { text: u ? u.split("?")[0] : "—" }));
+    p.append(h("h2", { text: cur.title }),
+      h("div", { class: "muted small", text: `${meta.title} · ${meta.platform} · ${ok}/${total} ders indirildi` }),
+      h("div", { style: "margin-top:10px" }, chip(cur.status), cur.duration ? h("span", { class: "small muted", text: "  " + fmtDur(cur.duration) }) : null),
+      cur.error ? h("div", { class: "small", style: "color:var(--err);margin-top:6px", text: cur.error }) : null,
+      h("div", { style: "margin-top:10px" }, link("Kurs sayfası", meta.source_url), link("Ders sayfası", cur.page_url), link("Videonun indirildiği adres", cur.video_source_url)));
+  }
+  function resRows(items, kind) {
+    if (!items.length) return [h("div", { class: "muted small", text: "Dosya yok." })];
+    return items.map((r, i) => {
+      const href = `/api/files/${enc(slug)}/${enc(kind)}/${i}`;
+      const inl = /\.(pdf|png|jpe?g|gif|webp|txt|md|py|json|csv|mp3|mp4)$/i.test(r.path || "");
+      return h("div", { class: "res" },
+        h("div", {}, h("div", { text: r.name }),
+          h("div", { class: "small muted" }, r.size_h ? r.size_h + " · " : "", safeUrl(r.url) ? h("a", { href: r.url, target: "_blank", rel: "noopener noreferrer nofollow", text: "orijinal adres" }) : "")),
+        r.path ? h("div", { class: "row" },
+          inl ? h("a", { class: "btn sm", href: href + "?inline=1", target: "_blank", rel: "noopener", text: "Aç" }) : null,
+          h("a", { class: "btn sm primary", href, text: "İndir" })) : h("span", { class: "chip err", text: "indirilemedi" }));
+    });
+  }
+  function paneRes(p) {
+    p.append(h("h2", { text: "Bu dersin dosyaları" }), ...resRows(cur.resources || [], cur.id),
+      h("h2", { style: "margin-top:22px", text: "Kurs kaynakları" }), ...resRows(meta.course_resources || [], "course"));
+  }
+  async function paneNotes(p) {
+    const ta = h("textarea", { rows: 3, placeholder: "Not yaz…", style: "width:100%" });
+    const list = h("div", { style: "margin-top:12px" });
+    const load = async () => {
+      const ns = await api("GET", `/api/notes/${enc(slug)}/${enc(lid)}`);
+      list.replaceChildren(...(ns.length ? ns.map(n => h("div", { class: "note" },
+        h("span", { class: "t", text: fmtTime(n.t), onclick: () => { if (video) { video.currentTime = n.t; video.play(); } } }),
+        h("div", { text: n.text, style: "white-space:pre-wrap" }),
+        h("button", { class: "btn sm danger", text: "Sil", onclick: async () => { await api("DELETE", `/api/notes/${enc(slug)}/${n.id}`); load(); } }))) : [h("div", { class: "muted small", text: "Bu derste not yok." })]));
+    };
+    p.append(ta, h("div", { class: "row", style: "margin-top:8px" },
+      h("button", { class: "btn primary", text: "Şu ana not ekle", onclick: async () => {
+        if (!ta.value.trim()) return;
+        try { await api("POST", `/api/notes/${enc(slug)}/${enc(lid)}`, { t: video ? video.currentTime : 0, text: ta.value.trim() }); ta.value = ""; load(); }
+        catch (e) { toast(e.message, true); }
+      } })), list);
+    load();
+  }
+  show("info");
+
+  root.append(h("div", { class: "watch" }, stage, side));
+}
+
+/* ============ AYARLAR ============ */
+async function viewSettings(root) {
+  const s = await api("GET", "/api/settings");
+  const PRESETS = ["ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"];
+  const f = {
+    encode_enabled: h("input", { type: "checkbox", checked: s.encode_enabled }),
+    encoder: h("select", {}, ["x265", "x264"].map(v => h("option", { value: v, text: v, selected: v === s.encoder }))),
+    crf: h("input", { type: "number", min: 0, max: 51, value: s.crf }),
+    preset: h("select", {}, PRESETS.map(v => h("option", { value: v, text: v, selected: v === s.preset }))),
+    parallel: h("input", { type: "number", min: 1, max: 8, value: s.parallel }),
+    handbrake_path: h("input", { value: s.handbrake_path, style: "width:100%" }),
+  };
+  const row = (label, el, hint) => h("div", { class: "field" }, h("label", { text: label }), h("div", {}, el, hint ? h("div", { class: "small muted", text: hint }) : null));
+  root.append(h("h1", { text: "Ayarlar" }), h("div", { class: "card" },
+    row("Yeniden kodlama (HandBrake)", f.encode_enabled, "Kapalıysa ham videolar doğrudan izlenir."),
+    row("Kodlayıcı", f.encoder), row("Kalite (CRF)", f.crf, "Düşük = daha iyi kalite / daha büyük dosya (varsayılan 22)."),
+    row("Preset", f.preset), row("Paralel ders sayısı", f.parallel), row("HandBrakeCLI yolu", f.handbrake_path),
+    h("div", { class: "row", style: "margin-top:12px" }, h("button", { class: "btn primary", text: "Kaydet", onclick: async () => {
+      try {
+        await api("PUT", "/api/settings", { encode_enabled: f.encode_enabled.checked, encoder: f.encoder.value, crf: +f.crf.value,
+          preset: f.preset.value, parallel: +f.parallel.value, handbrake_path: f.handbrake_path.value });
+        toast("Ayarlar kaydedildi");
+      } catch (e) { toast(e.message, true); }
+    } }))));
+}
+
+startEvents();
+route();
+</script>
+</body>
+</html>

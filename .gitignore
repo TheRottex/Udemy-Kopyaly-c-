@@ -1,0 +1,27 @@
+# oturum / gizli veriler
+profil/
+cookies.txt
+*.cookies
+.env
+data/
+*.db
+
+# indirilen medya ve çıktılar
+indirilen/
+final/
+kaynaklar/
+video_url_listesi/
+
+# ortam
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.tmp
+*.partial.mp4
+*.part
+
+# kişisel yerel notlar (yerel dosya yolları/kullanıcı adı içerir)
+Master Promt.txt
+Korsan_Udemy_Projesi.zip
